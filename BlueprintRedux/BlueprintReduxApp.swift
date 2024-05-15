@@ -7,6 +7,7 @@
 
 import SwiftUI
 import StateBlueprintRedux
+import Combine
 
 struct IncrementAction: Action {}
 struct DecrementAction: Action {}
@@ -20,27 +21,34 @@ class ConcreteAppState: AppState {
 }
 
 class CounterSaga: Saga {
-  
-    override func run(getState: @escaping () -> AppState?, dispatch: @escaping DispatchFunction, action: Action) -> DispatchWorkItem? {
-        
-        let item = DispatchWorkItem {
-           
-            for _ in 0..<5 {
-              
-                Thread.sleep(forTimeInterval: 1)
-
-                DispatchQueue.main.async {
-                    
-                    dispatch(IncrementAction())
-                }
-            }
-        }
-
-        DispatchQueue.global().async(execute: item)
-
-        return item
-        
+    func run(
+        getState: @escaping () -> (any StateBlueprintRedux.AppState)?,
+        dispatch: @escaping StateBlueprintRedux.DispatchFunction,
+        action: any StateBlueprintRedux.Action,
+        cancel: CancellationToken
+    ) -> AnyPublisher<Any, any Error>? {
+        return Future { promise in
+            
+              DispatchQueue.global().async {
+                  for _ in 0..<5 {
+                      if cancel.isCancelled {
+                          break 
+                      }
+                      
+                      Thread.sleep(forTimeInterval: 1)
+                   
+                      DispatchQueue.main.async {
+                          dispatch(IncrementAction())
+                      }
+                  }
+                  promise(.success(()))
+              }
+          }
+          .eraseToAnyPublisher()
     }
+    
+  
+
 }
 
 func createStore() -> Store<ConcreteAppState> {

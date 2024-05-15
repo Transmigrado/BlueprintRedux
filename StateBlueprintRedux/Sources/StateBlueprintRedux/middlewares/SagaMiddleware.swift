@@ -18,41 +18,45 @@ public struct AsyncAction: Action {
     }
 }
 
-public protocol SagaProtocol {
-    func cancel()
-    func run(getState: @escaping () -> AppState?, dispatch: @escaping DispatchFunction, action: Action) -> DispatchWorkItem?
+public protocol Saga {
+
+    func run(getState: @escaping () -> AppState?, dispatch: @escaping DispatchFunction, action: Action, cancel: CancellationToken) -> AnyPublisher<Any, Error>?
 }
 
-open class Saga: SagaProtocol {
-    
-    private var dispatchWorkItems: [DispatchWorkItem] = []
-    
-    public init(){}
-    
-    public func cancel() {
-        dispatchWorkItems.forEach{ $0.cancel()}
+public class CancellationToken {
+    private var _isCancelled: Bool = false
+    public var isCancelled: Bool {
+        return _isCancelled
     }
-    
-    public func addDispatchWorkItems(workItem: DispatchWorkItem){
-        dispatchWorkItems.append(workItem)
+
+    func cancel() {
+        _isCancelled = true
     }
-    
-    open func run(getState: @escaping () -> (any AppState)?, dispatch: @escaping DispatchFunction, action: any Action) -> DispatchWorkItem? {
-        return nil
-    }
-    
-    
 }
 
 class SagaManager {
    
+    var publishers: [AnyCancellable] = []
 
     func run(getState: @escaping () -> (any AppState)?, dispatch: @escaping DispatchFunction, action: Action, saga: Saga) {
       
-        saga.cancel()
-        guard let item =  saga.run(getState: getState, dispatch: dispatch, action: action) else { return  }
-        saga.addDispatchWorkItems(workItem: item)
+        publishers.forEach {
+            $0.cancel()
+        }
+        publishers = []
+        let cancellationToken = CancellationToken()
+        guard let item =  saga.run(getState: getState, dispatch: dispatch, action: action, cancel: cancellationToken)?
+            .handleEvents(receiveCancel: {
+                  cancellationToken.cancel()
+              })
+            .sink(receiveCompletion: { item in
         
+            }, receiveValue: { item in
+               
+            }) else { return  }
+      
+        
+        publishers.append(item)
    }
 }
 
