@@ -11,8 +11,6 @@ import StateBlueprintRedux
 struct IncrementAction: Action {}
 struct DecrementAction: Action {}
 
-
-
 class ConcreteAppState: AppState {
     var count: Int
 
@@ -22,22 +20,27 @@ class ConcreteAppState: AppState {
 }
 
 class CounterSaga: Saga {
-    
-    func run(getState: @escaping () -> (any AppState)?, dispatch: @escaping DispatchFunction, action: any Action) {
-      
-        DispatchQueue.global().async {
+  
+    override func run(getState: @escaping () -> AppState?, dispatch: @escaping DispatchFunction, action: Action) -> DispatchWorkItem? {
+        
+        let item = DispatchWorkItem {
+           
             for _ in 0..<5 {
+              
                 Thread.sleep(forTimeInterval: 1)
+
                 DispatchQueue.main.async {
+                    
                     dispatch(IncrementAction())
                 }
-              
             }
         }
-       
+
+        DispatchQueue.global().async(execute: item)
+
+        return item
+        
     }
-    
-   
 }
 
 func createStore() -> Store<ConcreteAppState> {
@@ -65,7 +68,6 @@ func createStore() -> Store<ConcreteAppState> {
 struct BlueprintReduxApp: App {
     
     let store = createStore()
-    
     
     var body: some Scene {
         WindowGroup {

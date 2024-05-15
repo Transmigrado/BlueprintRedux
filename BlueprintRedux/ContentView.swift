@@ -18,13 +18,14 @@ struct ContentView: View {
                 .foregroundStyle(.tint)
             Text("Hello, world! \(store.state.count)")
             Button("Increment"){
-                store.dispatch(IncrementAction())
+                store.dispatch(AsyncAction(sagaName: "CounterSaga", action: nil))
             }
         }
         .padding()
-        .onAppear{
+        .onAppear {
            
-            store.dispatch(AsyncAction(sagaName: "CounterSaga", action: nil))
+            
+           
         }
         
     }

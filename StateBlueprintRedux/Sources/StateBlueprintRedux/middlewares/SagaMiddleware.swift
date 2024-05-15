@@ -18,13 +18,49 @@ public struct AsyncAction: Action {
     }
 }
 
-public protocol Saga {
-    func run(getState: @escaping () -> AppState?, dispatch: @escaping DispatchFunction, action: Action)
+public protocol SagaProtocol {
+    func cancel()
+    func run(getState: @escaping () -> AppState?, dispatch: @escaping DispatchFunction, action: Action) -> DispatchWorkItem?
 }
+
+open class Saga: SagaProtocol {
+    
+    private var dispatchWorkItems: [DispatchWorkItem] = []
+    
+    public init(){}
+    
+    public func cancel() {
+        dispatchWorkItems.forEach{ $0.cancel()}
+    }
+    
+    public func addDispatchWorkItems(workItem: DispatchWorkItem){
+        dispatchWorkItems.append(workItem)
+    }
+    
+    open func run(getState: @escaping () -> (any AppState)?, dispatch: @escaping DispatchFunction, action: any Action) -> DispatchWorkItem? {
+        return nil
+    }
+    
+    
+}
+
+class SagaManager {
+   
+
+    func run(getState: @escaping () -> (any AppState)?, dispatch: @escaping DispatchFunction, action: Action, saga: Saga) {
+      
+        saga.cancel()
+        guard let item =  saga.run(getState: getState, dispatch: dispatch, action: action) else { return  }
+        saga.addDispatchWorkItems(workItem: item)
+        
+   }
+}
+
 
 public class SagaMiddleware<T: AppState>: Middleware {
     
-    private var runningEffects: [AnyCancellable] = []
+    private var sagaManager = SagaManager()
+   
     private var sagas: [String: Saga] = [:]
     
     public init(){
@@ -40,7 +76,7 @@ public class SagaMiddleware<T: AppState>: Middleware {
         if let startSagaAction = action as? AsyncAction {
  
             if let saga = sagas[startSagaAction.sagaName] {
-                saga.run(getState: getState, dispatch: dispatch, action: action)
+                sagaManager.run(getState: getState, dispatch: dispatch, action: action, saga: saga)
             }
         }
     }

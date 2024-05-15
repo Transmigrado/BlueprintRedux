@@ -37,4 +37,9 @@ public class Store<T: AppState>: ObservableObject {
 
         reducer(&state, action)
     }
+    
+}
+
+public func select<T, U>(_ keyPath: KeyPath<T, U>, from store: Store<T>) -> U {
+    return store.state[keyPath: keyPath]
 }
