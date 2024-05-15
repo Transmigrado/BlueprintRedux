@@ -14,6 +14,7 @@
 		05EDA8202BF43367004CE081 /* BlueprintReduxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05EDA81F2BF43367004CE081 /* BlueprintReduxTests.swift */; };
 		05EDA82A2BF43367004CE081 /* BlueprintReduxUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05EDA8292BF43367004CE081 /* BlueprintReduxUITests.swift */; };
 		05EDA82C2BF43367004CE081 /* BlueprintReduxUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05EDA82B2BF43367004CE081 /* BlueprintReduxUITestsLaunchTests.swift */; };
+		05EDA83B2BF4344A004CE081 /* StateBlueprintRedux in Frameworks */ = {isa = PBXBuildFile; productRef = 05EDA83A2BF4344A004CE081 /* StateBlueprintRedux */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +45,7 @@
 		05EDA8252BF43367004CE081 /* BlueprintReduxUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlueprintReduxUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		05EDA8292BF43367004CE081 /* BlueprintReduxUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueprintReduxUITests.swift; sourceTree = "<group>"; };
 		05EDA82B2BF43367004CE081 /* BlueprintReduxUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueprintReduxUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		05EDA8382BF43415004CE081 /* StateBlueprintRedux */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = StateBlueprintRedux; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +53,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05EDA83B2BF4344A004CE081 /* StateBlueprintRedux in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -74,10 +77,12 @@
 		05EDA8022BF43364004CE081 = {
 			isa = PBXGroup;
 			children = (
+				05EDA8382BF43415004CE081 /* StateBlueprintRedux */,
 				05EDA80D2BF43365004CE081 /* BlueprintRedux */,
 				05EDA81E2BF43367004CE081 /* BlueprintReduxTests */,
 				05EDA8282BF43367004CE081 /* BlueprintReduxUITests */,
 				05EDA80C2BF43365004CE081 /* Products */,
+				05EDA8392BF4344A004CE081 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -127,6 +132,13 @@
 			path = BlueprintReduxUITests;
 			sourceTree = "<group>";
 		};
+		05EDA8392BF4344A004CE081 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -143,6 +155,9 @@
 			dependencies = (
 			);
 			name = BlueprintRedux;
+			packageProductDependencies = (
+				05EDA83A2BF4344A004CE081 /* StateBlueprintRedux */,
+			);
 			productName = BlueprintRedux;
 			productReference = 05EDA80B2BF43365004CE081 /* BlueprintRedux.app */;
 			productType = "com.apple.product-type.application";
@@ -588,6 +603,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		05EDA83A2BF4344A004CE081 /* StateBlueprintRedux */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StateBlueprintRedux;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 05EDA8032BF43364004CE081 /* Project object */;
 }
